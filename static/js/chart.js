@@ -29,13 +29,11 @@ var myChart = null;
 
 function handleChart(type, day) {
     PostReq(`/chart`, { type: type, day: day }).then((res) => {
-        console.log(res.data);
         $("#grid_node").hide();
         $("#chart_wrapper").show();
         $("#title").text(`${chartPreset[type]["label"]} on ${getFormatDate(day)}`);
         let chart_data = []
         for (let value of res.data) {if (value == -1) {chart_data.push(0);} else {chart_data.push(value);}}
-        console.log(chart_data);
         const data = {
             labels: ["0h", "1h", "2h", "3h", "4h", "5h", "6h", "7h", "8h", "9h", "10h", "11h", "12h", "13h", "14h", "15h", "16h", "17h", "18h", "19h", "20h", "21h", "22h", "23h"],
             datasets: [{

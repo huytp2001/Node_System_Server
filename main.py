@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, url_for, jsonify
+from flask import Flask, render_template, request, jsonify
 import threading
 import serial
 from flask_socketio import SocketIO
@@ -42,55 +42,7 @@ def index():
 @app.route("/chart", methods=["POST"])
 def chart():
 	body = request.get_json()
-	# sensor_obj = {
-	# 	'temp': app.config['TEMP'], 
-	# 	'hum': app.config['HUM'], 
-	# 	'rain': "Yes" if int(app.config['RAIN']) < 500 else "No", 
-	# 	'lux': app.config['LUX']
-	# }
 	data_array = gb_data.fetch_data_by_day_and_type(get_format_date(int(body["day"])), body["type"])
-	# myChart = None
-	# if chart == "temp":
-	# 	myChart = Chart("Temperature (*C)", "rgba(235, 106, 47, 0.5)", 80, 0, "*C")
-	# if chart == "hum":
-	# 	myChart = Chart("Humidity (%)", "rgba(14, 75, 156, 0.5)", 100, 0, "%")
-	# if chart == "rain":
-	# 	myChart = Chart("Rain percent (%)", "rgba(9, 214, 204, 0.5)", 100, sum(1 for element in data_array if element > 10), "%")
-	# if chart == "lux":
-	# 	myChart = Chart("Light level (lx)", "rgba(226, 230, 18, 0.5)", 1000, sum(1 for element in data_array if element > 20), "lx")
-	# chart_obj = {
-	# 	"label": myChart.label,
-	# 	"col_color": myChart.col_color,
-	# 	"max_value": myChart.max_value,
-	# 	"data": data_array
-	# }
-	# data = [num for num in data_array if num != -1]
-	# try:
-	# 	sta_obj = {
-	# 		"average": f"{round(sum(data)/len(data),2)}{myChart.prefix}",
-	# 		"max": {
-	# 			"value": f"{max(data)}{myChart.prefix}",
-	# 			"index": data_array.index(max(data_array))
-	# 		},
-	# 		"min": {
-	# 			"value": f"{min(data)}{myChart.prefix}",
-	# 			"index": data_array.index(min(data_array))
-	# 		},
-	# 		"duration": myChart.duration
-	# 	}
-	# except:
-	# 	sta_obj = {
-	# 		"average": 0,
-	# 		"max": {
-	# 			"value": 0,
-	# 			"index": 0
-	# 		},
-	# 		"min": {
-	# 			"value": 0,
-	# 			"index": 0
-	# 		},
-	# 		"duration": 0
-	# 	}
 	return jsonify({"data": data_array}), 200
 
 @app.route("/add_node", methods=["POST"])
@@ -115,15 +67,6 @@ def delete_node():
 	id = data["id"]
 	gb_node.delete_node(id)
 	return jsonify({"code": 0}), 200
-
-@app.route("/notify", methods=["GET"])
-def get_notify():
-	return redirect(url_for("index"))
-
-@app.route("/delete_table")
-def delete_table():
-	gb_data.delete_table()
-	return redirect(url_for('index'))
 
 def listen_serial():
 	global send_flag, send_data

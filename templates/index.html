@@ -10,39 +10,18 @@
     ></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.6.2/socket.io.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js@3.5.1"></script>
-    <link
-      rel="stylesheet"
-      type="text/css"
-      href="{{ url_for('static', filename='css/index.css') }}"
-    />
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/index.css') }}"/>
   </head>
   <body>
     <header>
       <p><a href="#" onclick="dashboard()">Dashboard</a></p>
       <div class="data">
-        <p>
-          <a href="#" onclick="handleChart('temp', 0)"
-            >Temp: <span id="temp">{{ sensorData.temp }}</span>*C</a
-          >
-        </p>
-        <p>
-          <a href="#" onclick="handleChart('hum', 0)"
-            >Hum: <span id="hum">{{ sensorData.hum }}</span>%</a
-          >
-        </p>
-        <p>
-          <a href="#" onclick="handleChart('rain', 0)"
-            >Rain: <span id="rain">{{ sensorData.rain }}</span></a
-          >
-        </p>
-        <p>
-          <a href="#" onclick="handleChart('lux', 0)"
-            >Light: <span id="lux">{{ sensorData.lux }}</span> lux</a
-          >
-        </p>
+        <p><a href="#" onclick="handleChart('temp', 0)">Temp: <span id="temp">{{ sensorData.temp }}</span>*C</a></p>
+        <p><a href="#" onclick="handleChart('hum', 0)">Hum: <span id="hum">{{ sensorData.hum }}</span>%</a></p>
+        <p><a href="#" onclick="handleChart('rain', 0)">Rain: <span id="rain">{{ sensorData.rain }}</span></a></p>
+        <p><a href="#" onclick="handleChart('lux', 0)">Light: <span id="lux">{{ sensorData.lux }}</span> lux</a></p>
       </div>
       <div class="time">
-        <!-- <p><a href="/notify">Notification</a></p> -->
         <p id="date_time"></p>
       </div>
     </header>
@@ -67,11 +46,13 @@
           </div>
         </div>
         <div id="column_2">
+          <div id="statistic_wrapper">
             <p>Average: <span id="average"></span></p>
             <p>Min: <span id="min"></span></p>
             <p>Max: <span id="max"></span></p>
             <p id="duration">Duration: <span id="duration_value"></span></p>
           </div>
+        </div>
       </div>
     </div>
   </body>
@@ -107,7 +88,6 @@
 
         // Handle socket
         socket.on("stream", (data)=>{
-            console.log(data);
             const data_array = data.split("|");
             $("#temp").text(data_array[1]);
             $("#hum").text(data_array[2]);
@@ -120,7 +100,6 @@
         })
         // Handle socket
         socket.on("node", (data)=>{
-            console.log(data);
             const data_array = data.split('!');
             let id = data_array[1]
             let value = data_array[2]
@@ -130,6 +109,7 @@
                 }
             }
         })
+
     })
   </script>
 </html>
