@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Node System</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.4.1/socket.io.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        :root {
+            --primary: #0A1128;
+            --secondary: #ffffff;
+            --node: #e4e6eb;
+            --hover: #c9ccd1;
+        }
+        body {
+            font-family: Arial, Helvetica, sans-serif;
+            margin: 0px;
+            padding: 0px;
+            background-color: var(--secondary);
+        }
+        header {
+            position: relative;
+            background-color: var(--primary);
+            color: var(--secondary);
+            padding: 12px;
+            text-align: center;
+        }
+        header p {
+            font-weight: bold;
+            font-size: 24px;
+            padding: 0px;
+            margin: 0px;
+        }
+        header .data {
+            position: absolute;
+            top: 15px;
+            left: 15px;
+            columns: 4;
+            column-gap: 0px;
+        }
+        header .data p {
+            font-size: 20px;
+        }
+        header p a {
+            text-decoration: none;
+            color: white;
+        }
+        header .data p a{
+            text-decoration: none;
+            color: white;
+        }
+        header .time {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+        }
+        #myChart {
+            width: 90%;
+        }
+        #time_ctn {
+            display: flex;
+            flex-wrap: wrap;
+            width: 90%;
+            justify-content: center;
+            align-items: center;
+        }
+        #time_ctn a {
+            flex-basis: 14.2857%; 
+            padding: 10px;
+            box-sizing: border-box;
+        }
+        #title {
+            padding: 5px;
+            margin: 5px;
+        }
+        main {
+          display: flex;
+        }
+        main #column_2 p {
+          font-size: 20px;
+        }
+        #column_1 {
+          flex-basis: 70%;
+        }
+        #column_2 {
+          flex-basis: 30%;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <p><a href="/">Dashboard</a></p>
+        <div class="data">
+            <p><a href="/chart/temp/0">Temp: <span id="temp">{{ sensor.temp }}</span>*C</a></p>
+            <p><a href="/chart/hum/0">Hum: <span id="hum">{{ sensor.hum }}</span>%</a></p>
+            <p><a href="/chart/rain/0">Rain: <span id="rain">{{ sensor.rain }}</span></a></p>
+            <p><a href="/chart/lux/0">Light: <span id="lux">{{ sensor.lux }}</span> lux</a></p>
+        </div>
+        <div class="time">
+            <p id="date_time"></p>
+        </div>
+    </header>
+    <h3 id="title"></h3>
+    <main id="main">
+      <div id="column_1">
+        <div>
+          <canvas id="myChart"></canvas>
+          <div id=time_ctn>
+            <a id="day-6" href="6"></a>
+            <a id="day-5" href="5"></a>
+            <a id="day-4" href="4"></a>
+            <a id="day-3" href="3"></a>
+            <a id="day-2" href="2"></a>
+            <a id="day-1" href="1"></a>
+            <a id="day-0" href="0"></a>
+          </div>
+        </div>
+      </div>
+      <div id="column_2">
+        <p>Average: {{ statistics.average }}</p>
+        <p>Min: {{ statistics.min.value }} ({{ statistics.min.index }}h)</p>
+        <p>Max: {{ statistics.max.value }} ({{ statistics.max.index }}h)</p>
+        {% if statistics.duration != 0 %}
+          <p>Duration: {{ statistics.duration }}h</p>
+        {% endif %}
+      </div>
+    </main>
+</body>
+<script>
+    const date_time = document.getElementById("date_time");
+    const main = document.getElementById("main");
+    const temp = document.getElementById("temp");
+    const hum = document.getElementById("hum");
+    const rain = document.getElementById("rain");
+    const lux = document.getElementById("lux");
+    
+    function getFormatDate(reverse_day) {
+        var currentDateTime = new Date();
+        currentDateTime.setDate(currentDateTime.getDate() - reverse_day);
+        var day = currentDateTime.getDate();
+        var month = currentDateTime.getMonth() + 1; 
+        var formattedTime = ('0' + day).slice(-2) + '-' + ('0' + month).slice(-2);
+        return formattedTime;
+    }
+
+    function getFormatTime() {
+        var currentDateTime = new Date();
+        var hour = currentDateTime.getHours();
+        var minute = currentDateTime.getMinutes();
+        var day = currentDateTime.getDate();
+        var month = currentDateTime.getMonth() + 1; 
+        var year = currentDateTime.getFullYear()
+        var formattedTime = `${('0'+hour).slice(-2)}:${('0'+minute).slice(-2)} ${day}/${month}/${year}`;
+        return formattedTime;
+    }
+
+    var socket = io.connect();
+
+    date_time.innerText = getFormatTime();
+
+    setInterval(()=>{
+        date_time.innerText = getFormatTime();
+        if (getFormatTime().split(" ")[0] == "23:59") {
+          location.reload();
+        }
+    }, 60000);
+
+    document.getElementById("title").innerText = `{{ chart.label }} on ${getFormatDate( {{day}} )}`;
+    const data = {
+      labels: ["0h","1h","2h","3h","4h","5h","6h","7h","8h","9h","10h","11h","12h","13h","14h","15h","16h","17h","18h","19h","20h","21h","22h","23h"],
+      datasets: [{
+        label: '{{ chart.label }}',
+        data: [ 
+                {% for data in chart.data %}
+                  {% if data == -1 %}
+                    0,
+                  {% else %}
+                    {{ data }},
+                  {% endif %} 
+                {% endfor %}
+            ],
+        backgroundColor: '{{ chart.col_color }}',
+        borderColor: '{{ chart.col_color }}',
+        borderWidth: 2
+      }]
+    };
+    const ctx = document.getElementById('myChart').getContext('2d');
+    const myChart = new Chart(ctx, {
+      type: 'bar',
+      data: data,
+      options: {
+        responsive: false,
+        maintainAspectRatio: false,
+        scales: {
+          y: {
+            beginAtZero: true,
+            suggestedMax: {{ chart.max_value }}
+          }
+        }
+      }
+    });
+
+
+    for (let i = 0; i < 7; i++) {
+        document.getElementById(`day-${i}`).innerText = getFormatDate(i);
+    }
+
+    socket.on("stream", (data)=>{
+        console.log(data);
+        const data_array = data.split("|");
+        temp.innerText = data_array[1];
+        hum.innerText = data_array[2];
+        if (parseInt(data_array[3]) < 500) {
+            rain.innerText = "Yes";
+        } else {
+            rain.innerText = "No";
+        }
+        lux.innerText = data_array[4];
+    })
+</script>
+</html>

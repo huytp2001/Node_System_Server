@@ -1,0 +1,138 @@
+:root {
+    --primary: #0A1128;
+    --secondary: #ffffff;
+    --node: #e4e6eb;
+    --hover: #c9ccd1;
+}
+body {
+    font-family: Arial, Helvetica, sans-serif;
+    margin: 0px;
+    padding: 0px;
+    background-color: var(--secondary);
+}
+header {
+    position: relative;
+    background-color: var(--primary);
+    color: var(--secondary);
+    padding: 12px;
+    text-align: center;
+}
+header p {
+    font-weight: bold;
+    font-size: 24px;
+    padding: 0px;
+    margin: 0px;
+}
+#grid_node {
+    display: grid;
+    grid-template-columns: repeat(4,1fr);
+    grid-gap: 30px;
+    padding: 30px;
+}
+#grid_node .node {
+    position: relative;
+    height: 140px;
+    border-radius: 20px;
+    background-color: var(--node);
+    padding: 15px;
+    text-align: center;
+    transition: all 0.4s ease
+}
+#grid_node .node:hover {
+    background-color: var(--hover);
+}
+#grid_node .node p {
+    font-size: 18px;
+}
+#grid_node .node .node_name {
+    padding: 0px;
+    margin: 0px;
+    font-weight: bold;
+}
+#grid_node .node .node_data {
+    padding: 5px;
+    margin: 0px;
+}
+#grid_node .node .setting_btn {
+    position: absolute;
+    top: 10px;
+    right: 15px;
+    margin: 0;
+    font-size: 18px;
+    width: 32px;
+    height: 32px;
+    font-weight: bold;
+    border-radius: 50%;
+    background-color: transparent;
+    transition: all 0.2s ease
+}
+#grid_node .node .setting_ele {
+    display: none;
+    flex-direction: column;
+}
+#grid_node .node .setting_ele button {
+    height: 32px;
+    margin-left: 10px;
+    margin-right: 10px;
+}
+#grid_node .node .setting_btn:hover {
+    background-color: var(--node);
+    cursor: pointer;
+}
+header .data {
+    position: absolute;
+    top: 15px;
+    left: 15px;
+    columns: 4;
+    column-gap: 0px;
+}
+header p a {
+    text-decoration: none;
+    color: white;
+}
+header .data p {
+    font-size: 20px;
+}
+header .data p a{
+    text-decoration: none;
+    color: white;
+}
+header .time {
+    position: absolute;
+    columns: 2;
+    top: 15px;
+    right: 15px;
+}
+
+/* Chart */
+#time_ctn {
+    display: flex;
+    flex-wrap: wrap;
+    width: 90%;
+    justify-content: center;
+    align-items: center;
+}
+#time_ctn a {
+    flex-basis: 14.2857%; 
+    padding: 10px;
+    box-sizing: border-box;
+}
+#title {
+    padding: 5px;
+    margin: 5px;
+}
+#chart {
+  display: flex;
+}
+#myChart {
+    width: 932px;
+}
+#chart #column_2 p {
+  font-size: 20px;
+}
+#column_1 {
+  flex-basis: 70%;
+}
+#column_2 {
+  flex-basis: 30%;
+}
