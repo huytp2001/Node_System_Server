@@ -1,7 +1,7 @@
-async function PostReq(url, data) {
+async function MakeReq(url, method, data) {
     try {
         const response = await fetch(url, {
-            method: 'POST',
+            method: method,
             headers: {
                 'Content-Type': 'application/json'
             },

@@ -2,9 +2,10 @@ from flask import Flask, render_template, request, jsonify
 import threading
 import serial
 from flask_socketio import SocketIO
-from query import *
 import schedule
-from utils import *
+from routes import node as node_api
+from query import data, node
+from datetime import datetime, timedelta
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'dangquochuy'
@@ -17,16 +18,16 @@ app.config['LUX'] = 0
 send_flag = threading.Event()  
 send_data = ""
 
-gb_data = DataChart()
-gb_node = Node()
+gb_data = data.DataChart()
+gb_node = node.Node()
 
-@app.route("/send_out", methods=["POST"])
-def send_out():
-	global send_flag, send_data
-	body = request.get_json()
-	send_flag.set()
-	send_data = body["mess"]
-	return jsonify({"code": 0}), 200
+def get_format_date(reverse_day):
+    current_date = datetime.now()
+    new_date = current_date - timedelta(days=reverse_day)
+    day = new_date.day
+    month = new_date.month
+    formatted_date = "{:02d}-{:02d}".format(day, month)
+    return formatted_date
 
 @app.route("/")
 def index():
@@ -45,28 +46,15 @@ def chart():
 	data_array = gb_data.fetch_data_by_day_and_type(get_format_date(int(body["day"])), body["type"])
 	return jsonify({"data": data_array}), 200
 
-@app.route("/add_node", methods=["POST"])
-def add_node():
+@app.route("/send_out", methods=["POST"])
+def send_out():
+	global send_flag, send_data
 	body = request.get_json()
-	name = body["name"]
-	id = body["id"]
-	query_code = gb_node.insert_node(id, name, 1024)
-	return jsonify({"code": str(query_code)}), 200
-
-@app.route("/rename_node", methods=["POST"])
-def rename_node():
-	print("Hello")
-	body = request.get_json()
-	query_code = gb_node.rename_node(body["id"], body["new_name"])
-	print(query_code)
-	return jsonify({"code": str(query_code)}), 200
-
-@app.route("/delete_node", methods=["POST"])
-def delete_node():
-	data = request.get_json()
-	id = data["id"]
-	gb_node.delete_node(id)
+	send_flag.set()
+	send_data = body["mess"]
 	return jsonify({"code": 0}), 200
+
+app.register_blueprint(node_api.bp)
 
 def listen_serial():
 	global send_flag, send_data
@@ -91,7 +79,7 @@ def listen_serial():
 				data_array = line.split('!')
 				if data_array[0] == "node":
 					socketio.emit("node", line)
-					myNode = Node()
+					myNode = node.Node()
 					myNode.update_node(data_array[1], data_array[2])
 			if data_array[0] == "sensorstream":
 				socketio.emit('stream', line)
@@ -100,7 +88,7 @@ def listen_serial():
 				app.config['RAIN'] = data_array[3]
 				app.config['LUX'] = data_array[4]
 			if data_array[0] == "sensordata":
-				myData = DataChart()
+				myData = data.DataChart()
 				myData.insert_data(data_array[1], data_array[2], data_array[3], data_array[4])
 		if send_flag.is_set():
 			tx_serial(send_data)

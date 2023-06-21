@@ -73,7 +73,7 @@ class Node {
             if (!answer) {
                 return;
             }
-            PostReq('/delete_node', { id: this.id }).then((res) => {
+            MakeReq('/node/delete', "DELETE", { id: this.id }).then((res) => {
                 if (res.code === 0) {
                     $(`#${this.id}`).remove();
                     let count = 0;
@@ -93,7 +93,7 @@ class Node {
 function handle_rename_node(event) {
     event.preventDefault();
     if ($("#new_name_input").val() == "" || $("#new_name_input").val() == current_name) return;
-    PostReq(`/rename_node`, {id: current_nodeID, new_name: $("#new_name_input").val()}).then((res)=>{
+    MakeReq(`/node/rename`, "PUT", {id: current_nodeID, new_name: $("#new_name_input").val()}).then((res)=>{
         if (res.code != 0) { ErrorCodeHandle(res.code) }
         else {
             $(`#${current_nodeID}_rename_form`).hide();
@@ -141,7 +141,7 @@ class AddNode {
 function handle_add_node(event) {
     event.preventDefault();
     if ($("#input_name").val() == "" || $("#input_id").val() == "") return;
-    PostReq("/add_node", {name: $("#input_name").val(), id: $("#input_id").val()}).then((res)=>{
+    MakeReq("/node/create", "POST", {name: $("#input_name").val(), id: $("#input_id").val()}).then((res)=>{
         if (res.code != 0) { ErrorCodeHandle(res.code) }
         else {
             temp_node = new Node($("#input_name").val(), $("#input_id").val(), {"soil": "0.00", "status": "Normal", "update_time": `${getFormatTime().split(" ")[0]} ${getFormatTime().split(" ")[1]}`});
