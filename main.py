@@ -18,9 +18,6 @@ app.config['LUX'] = 0
 send_flag = threading.Event()  
 send_data = ""
 
-gb_data = data.DataChart()
-gb_node = node.Node()
-
 def get_format_date(reverse_day):
     current_date = datetime.now()
     new_date = current_date - timedelta(days=reverse_day)
@@ -31,19 +28,19 @@ def get_format_date(reverse_day):
 
 @app.route("/")
 def index():
-	node_array = gb_node.fetch_all_node()
 	data_obj = {
 		'temp': app.config['TEMP'], 
 		'hum': app.config['HUM'], 
 		'rain': "Yes" if int(app.config['RAIN']) < 500 else "No", 
 		'lux': app.config['LUX']
 	}
-	return render_template("index.html", sensorData = data_obj, node_array=node_array)
+	return render_template("index.html", sensorData = data_obj)
 
 @app.route("/chart", methods=["POST"])
 def chart():
+	Data = data.DataChart()
 	body = request.get_json()
-	data_array = gb_data.fetch_data_by_day_and_type(get_format_date(int(body["day"])), body["type"])
+	data_array = Data.fetch_data_by_day_and_type(get_format_date(int(body["day"])), body["type"])
 	return jsonify({"data": data_array}), 200
 
 @app.route("/send_out", methods=["POST"])

@@ -28,7 +28,7 @@ const chartPreset = {
 var myChart = null;
 
 function handleChart(type, day) {
-    PostReq(`/chart`, { type: type, day: day }).then((res) => {
+    MakeReq(`/chart`, "POST" ,{ type: type, day: day }).then((res) => {
         $("#grid_node").hide();
         $("#chart_wrapper").show();
         $("#title").text(`${chartPreset[type]["label"]} on ${getFormatDate(day)}`);

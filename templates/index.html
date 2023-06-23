@@ -71,14 +71,14 @@
 
         $("#chart_wrapper").hide();
 
-        // Render node
-        {% for node in node_array %}
-            percent = ((Math.abs( {{node[3]}}-1024))/10.24).toFixed(2);
-            temp_node = new Node( "{{node[2]}}" , "{{node[1]}}" , {"soil": percent , "status": "Normal", "update_time": "{{node[4]}}" })
+        MakeReq("/node/getall", "GET", {}).then((res)=>{
+          for (const node of res) {
+            percent = ((Math.abs( node["soil"] -1024))/10.24).toFixed(2);
+            temp_node = new Node(node["name"], node["id"], {"soil": percent, "status": "Normal", "update_time": node["up_time"]});
             Node_list.push(temp_node)
-        {% endfor %}
-
-        $('#grid_node').append(new AddNode);
+          }
+          $('#grid_node').append(new AddNode);
+        })
 
         // Update time
         $("#date_time").text(getFormatTime());

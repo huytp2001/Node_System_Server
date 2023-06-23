@@ -72,14 +72,17 @@ class Node:
         return code
 
     def fetch_all_node(self):
+        nodes = []
         conn = sqlite3.connect('database.db')
         c = conn.cursor()
         c.execute('''
             SELECT * FROM nodes
         ''')
         rows = c.fetchall()
+        for row in rows:
+            nodes.append({"id": row[1], "name": row[2], "soil": row[3], "up_time": row[4]}) 
         conn.close()
-        return rows
+        return nodes
 
     def fetch_node(self, node_id):
         conn = sqlite3.connect('database.db')

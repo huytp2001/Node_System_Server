@@ -32,38 +32,50 @@ class Node {
                     <button id="${this.id}_rename">Rename</button>
                     <button id="${this.id}_delete">Delete</button>
                 </div>
+                <div id="${this.id}_detail_ctn">
+                    <p>Node ID: ${this.id}</p>
+                </div>
             `
         });
-
+        
         nodeDiv.on('mouseleave', () => {
             if (this.state) {
+                $(`#${this.id}_detail_ctn`).hide();
                 $(`#${this.id}_node_setting_ctn`).hide();
                 $(`#${this.id}_node_data_ctn`).show();
                 this.state = false;
             }
-            $(`#${this.id}_node_name`).show();
             $(`#${this.id}_rename_form`).hide();
+            $(`#${this.id}_node_name`).show();
         });
 
         $('#grid_node').append(nodeDiv);
     }
 
     attachEventListeners() {
+        $(`#${this.id}_detail_ctn`).hide();
+        
         $(`#${this.id}_setting`).on('click', () => {
             if (!this.state) {
+                current_nodeID = this.id;
+                current_name = this.name;
                 $(`#${this.id}_node_setting_ctn`).show();
                 $(`#${this.id}_node_data_ctn`).hide();
                 this.state = true;
             } else {
+                $(`#${this.id}_detail_ctn`).hide();
                 $(`#${this.id}_node_setting_ctn`).hide();
                 $(`#${this.id}_node_data_ctn`).show();
                 this.state = false;
             }
         });
 
+        $(`#${this.id}_detail`).on('click', () => {
+            $(`#${this.id}_node_setting_ctn`).hide();
+            $(`#${this.id}_detail_ctn`).show();
+        });
+
         $(`#${this.id}_rename`).on('click', () => {
-            current_nodeID = this.id;
-            current_name = this.name;
             $(`#${this.id}_node_name`).hide();
             $(`#${this.id}_rename_form`).show();
         });
