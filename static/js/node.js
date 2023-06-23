@@ -1,5 +1,6 @@
 let current_nodeID = ""
 let current_name = ""
+var Node_list = [];
 
 class Node {
     constructor(name, id, data) {
@@ -38,6 +39,12 @@ class Node {
             `
         });
         
+        $('#grid_node').append(nodeDiv);
+        
+        nodeDiv.on("click", ()=>{
+            $("#notify_box_ctn").hide();
+        })
+
         nodeDiv.on('mouseleave', () => {
             if (this.state) {
                 $(`#${this.id}_detail_ctn`).hide();
@@ -48,8 +55,6 @@ class Node {
             $(`#${this.id}_rename_form`).hide();
             $(`#${this.id}_node_name`).show();
         });
-
-        $('#grid_node').append(nodeDiv);
     }
 
     attachEventListeners() {
@@ -90,7 +95,7 @@ class Node {
                     $(`#${this.id}`).remove();
                     let count = 0;
                     for (let node of Node_list) {
-                        if (node.id == `#${this.id}`) {
+                        if (node.id == this.id) {
                             Node_list.splice(count,1);
                             break;
                         }
@@ -137,6 +142,9 @@ class AddNode {
               </div>
             `
         });
+        addNode.on("click", ()=>{
+            $("#notify_box_ctn").hide();
+        })
         addNode.on('mouseover', () => {
             $('#add_sign').hide();
             $('#add_form_ctn').show();
@@ -150,9 +158,13 @@ class AddNode {
     }
 }
 
+let temp_node;
+let percent;
+
 function handle_add_node(event) {
     event.preventDefault();
     if ($("#input_name").val() == "" || $("#input_id").val() == "") return;
+    if ($("#input_id").val().includes(" ")) {alert("Node ID can not have white space!"); return;}
     MakeReq("/node/create", "POST", {name: $("#input_name").val(), id: $("#input_id").val()}).then((res)=>{
         if (res.code != 0) { ErrorCodeHandle(res.code) }
         else {
@@ -164,5 +176,12 @@ function handle_add_node(event) {
     })
 }
 
-
+MakeReq("/node/getall", "GET", {}).then((res)=>{
+    for (const node of res) {
+      percent = ((Math.abs( node["soil"] -1024))/10.24).toFixed(2);
+      temp_node = new Node(node["name"], node["id"], {"soil": percent, "status": "Normal", "update_time": node["up_time"]});
+      Node_list.push(temp_node)
+    }
+    $('#grid_node').append(new AddNode);
+})
   

@@ -1,3 +1,5 @@
+$("#chart_wrapper").hide();
+
 const chartPreset = {
     temp: {
         label: "Temperature (*C)",
@@ -28,7 +30,9 @@ const chartPreset = {
 var myChart = null;
 
 function handleChart(type, day) {
+    $("#notify_box_ctn").hide();
     MakeReq(`/chart`, "POST" ,{ type: type, day: day }).then((res) => {
+        type_and_day = `${type} ${day}`
         $("#grid_node").hide();
         $("#chart_wrapper").show();
         $("#title").text(`${chartPreset[type]["label"]} on ${getFormatDate(day)}`);
@@ -80,3 +84,10 @@ function handleChart(type, day) {
     })
 }
 
+$("#myChart").on("click", ()=>{
+    $("#notify_box_ctn").hide();
+})
+
+$("#title").on("click", ()=>{
+    $("#notify_box_ctn").hide();
+})

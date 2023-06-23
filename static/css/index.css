@@ -5,6 +5,7 @@
     --hover: #c9ccd1;
 }
 body {
+    z-index: 1;
     font-family: Arial, Helvetica, sans-serif;
     margin: 0px;
     padding: 0px;
@@ -16,6 +17,7 @@ header {
     color: var(--secondary);
     padding: 12px;
     text-align: center;
+    box-shadow: 2px 2px 4px 0px #000000;
 }
 header p {
     font-weight: bold;
@@ -36,7 +38,8 @@ header p {
     background-color: var(--node);
     padding: 15px;
     text-align: center;
-    transition: all 0.4s ease
+    transition: all 0.4s ease;
+    box-shadow: 2px 2px 4px 0px #000000;
 }
 #grid_node .node:hover {
     background-color: var(--hover);
@@ -101,6 +104,7 @@ header .time {
     position: absolute;
     top: 15px;
     right: 15px;
+    columns: 2;
 }
 
 /* Chart */
@@ -128,4 +132,49 @@ header .time {
 }
 #statistic_wrapper {
     padding-left: 50px;
+}
+
+/* Notify board */
+#notify_box_ctn {
+    position: absolute;
+    z-index: 2;
+    width: 400px;
+    height: 500px;
+    top: 65px;
+    right: 100px;
+    background-color: var(--node);
+    border-radius: 20px;
+    box-shadow: 2px 2px 4px 0px #000000;
+    overflow: auto;
+}
+
+#notify_content_ctn {
+    padding: 15px;
+}
+
+.notify_box {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+    align-items: center;
+}
+
+.notify_time p {
+    font-size: 16px;
+    font-weight: bold;
+    padding: 0;
+    margin: 0;
+}
+
+.notify_mess {
+    font-size: 14px;
+    padding: 0;
+    margin: 0;
+    flex: 0 0 80%;
+}
+
+.notify_delete {
+    font-size: 30px;
+    text-decoration: none;
+    color: black;
 }

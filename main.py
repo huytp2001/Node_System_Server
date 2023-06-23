@@ -4,6 +4,7 @@ import serial
 from flask_socketio import SocketIO
 import schedule
 from routes import node as node_api
+from routes import notify as notify_api
 from query import data, node
 from datetime import datetime, timedelta
 
@@ -52,6 +53,7 @@ def send_out():
 	return jsonify({"code": 0}), 200
 
 app.register_blueprint(node_api.bp)
+app.register_blueprint(notify_api.bp)
 
 def listen_serial():
 	global send_flag, send_data

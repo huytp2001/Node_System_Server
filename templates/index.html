@@ -13,6 +13,7 @@
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/index.css') }}"/>
   </head>
   <body>
+
     <header>
       <p><a href="#" onclick="dashboard()">Dashboard</a></p>
       <div class="data">
@@ -22,10 +23,16 @@
         <p><a href="#" onclick="handleChart('lux', 0)">Light: <span id="lux">{{ sensorData.lux }}</span> lux</a></p>
       </div>
       <div class="time">
+        <p><a href="#" id="nofity_btn" onclick="showNotify()">Notify(<span id="notify_num"></span>)</a></p>
         <p id="date_time"></p>
       </div>
     </header>
-
+    
+    <div id="notify_box_ctn">
+      <div id="notify_content_ctn">
+      </div>
+    </div>
+    
     <div id="grid_node"></div>
 
     <div id="chart_wrapper">
@@ -55,61 +62,12 @@
         </div>
       </div>
     </div>
+
   </body>
-  <script>
-    // Declare global variable
-    var socket = io.connect();
-    let Node_list = [];
-    let temp_node;
-    let percent;
-  </script>
   <script src="{{ url_for('static', filename='js/script.js') }}"></script>
   <script src="{{ url_for('static', filename='js/node.js') }}"></script>
   <script src="{{ url_for('static', filename='js/chart.js') }}"></script>
-  <script>
-    $(document).ready(()=>{
-
-        $("#chart_wrapper").hide();
-
-        MakeReq("/node/getall", "GET", {}).then((res)=>{
-          for (const node of res) {
-            percent = ((Math.abs( node["soil"] -1024))/10.24).toFixed(2);
-            temp_node = new Node(node["name"], node["id"], {"soil": percent, "status": "Normal", "update_time": node["up_time"]});
-            Node_list.push(temp_node)
-          }
-          $('#grid_node').append(new AddNode);
-        })
-
-        // Update time
-        $("#date_time").text(getFormatTime());
-        setInterval(()=>{
-            $("#date_time").text(getFormatTime());
-        }, 60000);
-
-        // Handle socket
-        socket.on("stream", (data)=>{
-            const data_array = data.split("|");
-            $("#temp").text(data_array[1]);
-            $("#hum").text(data_array[2]);
-            if (parseInt(data_array[3]) < 500) {
-                $("rain").text("Yes");
-            } else {
-                $("rain").text("No");
-            }
-            $("lux").text(data_array[4]);
-        })
-        // Handle socket
-        socket.on("node", (data)=>{
-            const data_array = data.split('!');
-            let id = data_array[1]
-            let value = data_array[2]
-            for (let node of Node_list) {
-                if (id == node.id) {
-                    node.update_data(value);
-                }
-            }
-        })
-
-    })
-  </script>
+  <script src="{{ url_for('static', filename='js/notify.js') }}"></script>
+  <script src="{{ url_for('static', filename='js/socket.js') }}"></script>
+  <script src="{{ url_for('static', filename='js/interval.js') }}"></script>
 </html>
