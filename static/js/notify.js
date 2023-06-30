@@ -25,7 +25,7 @@ class Notify {
             <hr>
             `
         });
-        $("#notify_content_ctn").append(notify_div);
+        $("#notify_content_ctn").prepend(notify_div);
     }
     attachEventListenner() {
         $(`#${this.id}_notify_del`).on("click", ()=>{
@@ -58,7 +58,8 @@ $("#notify_box_ctn").hide();
 $(document).on("click", (event)=>{
     var target = event.target.outerHTML;
     var sample = target.substring(0, 20);
-    if(sample == `<html lang="en"><hea` || sample == `<div id="grid_node">`) {
+    console.log(sample);
+    if(sample == `<html lang="en"><hea` || sample == `<div id="grid_node">` || sample == `<div id="grid_node"`) {
         $("#notify_box_ctn").hide();
     }
 })
@@ -68,8 +69,6 @@ $("header").on("click",(event)=>{
     $("#notify_box_ctn").hide();
 })
 
-// MakeReq("/notify/add", "POST", {mess: "HAHAHAHAHA"});
-
 MakeReq("/notify/getall", "GET", {}).then((res)=>{
     for (const notify of res) {
         temp_notify = new Notify(notify.id, notify.time, notify.mess);
@@ -77,10 +76,5 @@ MakeReq("/notify/getall", "GET", {}).then((res)=>{
     }
     $("#notify_num").text(notify_list.length);
 })
-
-
-
-
-
 
 
