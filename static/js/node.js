@@ -43,6 +43,7 @@ class Node {
         
         nodeDiv.on("click", ()=>{
             $("#notify_box_ctn").hide();
+            $("#disease_box_ctn").hide();
         })
 
         nodeDiv.on('mouseleave', () => {
@@ -144,6 +145,7 @@ class AddNode {
         });
         addNode.on("click", ()=>{
             $("#notify_box_ctn").hide();
+            $("#disease_box_ctn").hide();
         })
         addNode.on('mouseover', () => {
             $('#add_sign').hide();

@@ -95,3 +95,10 @@ class DataChart():
         c.execute("DROP TABLE IF EXISTS data")
         conn.commit()
         conn.close()
+
+if __name__ == "__main__":
+    data = DataChart()
+    for _ in range(72):
+        data.insert_data(30.0, 50.0, 0, 500)
+    for row in data.fetch_all_data():
+        print(row)

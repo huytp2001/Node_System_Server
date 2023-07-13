@@ -48,8 +48,10 @@ class Notify {
 function showNotify() {
     if ($("#notify_box_ctn").is(":visible")) {
         $("#notify_box_ctn").hide();
+        console.log("hide");
     } else {
         $("#notify_box_ctn").show();
+        console.log("show");
     }
 }
 
@@ -61,11 +63,20 @@ $(document).on("click", (event)=>{
     console.log(sample);
     if(sample == `<html lang="en"><hea` || sample == `<div id="grid_node">` || sample == `<div id="grid_node"`) {
         $("#notify_box_ctn").hide();
+        $("#disease_box_ctn").hide();
     }
 })
 
 $("header").on("click",(event)=>{
-    if ($("#nofity_btn").is(event.target)) {return;}
+    if ($("#nofity_btn").is(event.target)) {
+        $("#disease_box_ctn").hide();
+        return;
+    }
+    if ($("#disease_btn").is(event.target)) {
+        $("#notify_box_ctn").hide();
+        return;
+    }
+    $("#disease_box_ctn").hide();
     $("#notify_box_ctn").hide();
 })
 

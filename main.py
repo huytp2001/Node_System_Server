@@ -27,6 +27,48 @@ def get_format_date(reverse_day):
     formatted_date = "{:02d}-{:02d}".format(day, month)
     return formatted_date
 
+def disease_diagnosis(data_array):
+	if len(data_array) == 0:
+		return []
+	diseases = []
+	avr_temp = 0
+	avr_hum = 0
+	avr_rain = 0
+	for data in data_array:
+		avr_temp += data[1]
+		avr_hum += data[2]
+		avr_rain += data[3]
+	avr_temp = avr_temp / len(data_array)
+	avr_hum = avr_hum / len(data_array)
+	avr_rain = avr_rain / len(data_array)
+	if avr_rain > 100 and avr_temp > 30 and avr_hum > 80:
+		diseases.append("Bệnh đốm trắng")
+	if avr_hum > 85 and avr_rain > 100:
+		diseases.append("Bệnh đốm nâu")
+	if avr_temp > 35:
+		diseases.append("Bệnh nám cành") 
+	if avr_rain > 100:
+		diseases.append("Bệnh thối đầu cành")
+	if avr_rain > 100 and avr_temp > 25 and avr_hum > 80:
+		diseases.append("Bệnh thán thư") 
+	return diseases
+
+@app.route("/toggle_light")
+def toggle_light():
+	print("light")
+	global send_data, send_flag
+	send_flag.set()
+	send_data = "toggle_light"
+	return jsonify({"code": 0}), 200
+
+@app.route("/toggle_water")
+def toggle_water():
+	print("water")
+	global send_data, send_flag
+	send_flag.set()
+	send_data = "toggle_water"
+	return jsonify({"code": 0}), 200
+
 @app.route("/")
 def index():
 	data_obj = {
@@ -35,7 +77,10 @@ def index():
 		'rain': "Yes" if int(app.config['RAIN']) < 500 else "No", 
 		'lux': app.config['LUX']
 	}
-	return render_template("index.html", sensorData = data_obj)
+	Data = data.DataChart()
+	data_array = Data.fetch_data_limit(72)
+	diseases = disease_diagnosis(data_array)
+	return render_template("index.html", sensorData = data_obj, diseases=diseases)
 
 @app.route("/chart", methods=["POST"])
 def chart():

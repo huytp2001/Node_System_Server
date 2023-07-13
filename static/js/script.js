@@ -97,3 +97,4 @@ function getDuration(array, threshold) {
     }     
     return duration;
 }
+

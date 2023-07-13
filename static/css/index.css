@@ -83,9 +83,9 @@ header p {
     cursor: pointer;
 }
 header .data {
-    position: absolute;
+    /* position: absolute;
     top: 15px;
-    left: 15px;
+    left: 15px; */
     columns: 4;
     column-gap: 0px;
 }
@@ -104,7 +104,25 @@ header .time {
     position: absolute;
     top: 15px;
     right: 15px;
+    columns: 3;
+    column-gap: 0px;
+}
+
+header .time p {
+    font-size: 20px;
+}
+
+#data_togglebtn_ctn {
+    position: absolute;
+    top: 15px;
+    left: 15px;
     columns: 2;
+    column-gap: 20px;
+}
+
+#toggle_btn {
+    columns: 2;
+    column-gap: 0px;
 }
 
 /* Chart */
@@ -177,4 +195,29 @@ header .time {
     font-size: 30px;
     text-decoration: none;
     color: black;
+}
+
+/* Disease box */
+#disease_box_ctn {
+    position: absolute;
+    z-index: 2;
+    width: 200px;
+    height: 300px;
+    top: 65px;
+    right: 350px;
+    background-color: var(--node);
+    border-radius: 20px;
+    box-shadow: 2px 2px 4px 0px #000000;
+}
+
+#disease_content_ctn {
+    padding: 15px;
+}
+
+.disease_box {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+    align-items: center;
+    font-weight: bold;
 }

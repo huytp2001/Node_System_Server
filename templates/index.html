@@ -11,23 +11,43 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.6.2/socket.io.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js@3.5.1"></script>
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/index.css') }}"/>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@48,400,0,0" />
   </head>
   <body>
 
     <header>
       <p><a href="#" onclick="dashboard()">Dashboard</a></p>
-      <div class="data">
-        <p><a href="#" onclick="handleChart('temp', 0)">Temp: <span id="temp">{{ sensorData.temp }}</span>*C</a></p>
-        <p><a href="#" onclick="handleChart('hum', 0)">Hum: <span id="hum">{{ sensorData.hum }}</span>%</a></p>
-        <p><a href="#" onclick="handleChart('rain', 0)">Rain: <span id="rain">{{ sensorData.rain }}</span></a></p>
-        <p><a href="#" onclick="handleChart('lux', 0)">Light: <span id="lux">{{ sensorData.lux }}</span> lux</a></p>
+      <div id="data_togglebtn_ctn">
+        <div class="data">
+          <p><a href="#" onclick="handleChart('temp', 0)"><span class="material-symbols-outlined">device_thermostat</span> <span id="temp">{{ sensorData.temp }}</span>*C</a></p>
+          <p><a href="#" onclick="handleChart('hum', 0)"><span class="material-symbols-outlined">humidity_percentage</span> <span id="hum">{{ sensorData.hum }}</span>%</a></p>
+          <p><a href="#" onclick="handleChart('rain', 0)"><span class="material-symbols-outlined">rainy</span> <span id="rain">{{ sensorData.rain }}</span></a></p>
+          <p><a href="#" onclick="handleChart('lux', 0)"><span class="material-symbols-outlined">wb_sunny</span> <span id="lux">{{ sensorData.lux }}</span> lux</a></p>
+        </div>
+        <div id="toggle_btn">
+          <p><span style="font-size: 30px;" class="material-symbols-outlined">sprinkler</span><a href="#" onclick="toggle_water()"><span id="toggle_water" style="font-size: 40px;" class="material-symbols-outlined">toggle_off</span></a></p>
+          <p><span style="font-size: 30px;" class="material-symbols-outlined">lightbulb</span><a href="#" onclick="toggle_light()"><span id="toggle_light" style="font-size: 40px;" class="material-symbols-outlined">toggle_off</span></a></p>
+        </div>
       </div>
+      
       <div class="time">
+        <p><a href="#" id="disease_btn" onclick="showDiseases()">Diseases({{ diseases|length }})</a></p>
         <p><a href="#" id="nofity_btn" onclick="showNotify()">Notify(<span id="notify_num"></span>)</a></p>
         <p id="date_time"></p>
       </div>
     </header>
     
+    <div id="disease_box_ctn">
+      <div id="disease_content_ctn">
+        {% for data in disease %}
+          <div class="disease_box">
+            <p>{{ data }}</p>
+          </div>
+          <hr>
+        {% endfor %}
+      </div>
+    </div>
+
     <div id="notify_box_ctn">
       <div id="notify_content_ctn">
       </div>
@@ -67,6 +87,8 @@
   <script src="{{ url_for('static', filename='js/script.js') }}"></script>
   <script src="{{ url_for('static', filename='js/node.js') }}"></script>
   <script src="{{ url_for('static', filename='js/chart.js') }}"></script>
+  <script src="{{ url_for('static', filename='js/control.js') }}"></script>
+  <script src="{{ url_for('static', filename='js/disease.js') }}"></script>
   <script src="{{ url_for('static', filename='js/notify.js') }}"></script>
   <script src="{{ url_for('static', filename='js/socket.js') }}"></script>
   <script src="{{ url_for('static', filename='js/interval.js') }}"></script>

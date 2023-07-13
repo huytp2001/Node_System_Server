@@ -31,6 +31,7 @@ var myChart = null;
 
 function handleChart(type, day) {
     $("#notify_box_ctn").hide();
+    $("#disease_box_ctn").hide();
     MakeReq(`/chart`, "POST" ,{ type: type, day: day }).then((res) => {
         type_and_day = `${type} ${day}`
         $("#grid_node").hide();
@@ -86,8 +87,10 @@ function handleChart(type, day) {
 
 $("#myChart").on("click", ()=>{
     $("#notify_box_ctn").hide();
+    $("#disease_box_ctn").hide();
 })
 
 $("#title").on("click", ()=>{
     $("#notify_box_ctn").hide();
+    $("#disease_box_ctn").hide();
 })
